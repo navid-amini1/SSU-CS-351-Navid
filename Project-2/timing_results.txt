@@ -1,0 +1,1 @@
+./trials.sh: line 1: d: command not found

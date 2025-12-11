@@ -1,0 +1,22 @@
+=== MEAN CALCULATION TESTS ===
+Serial (mean.out):
+Time: 33.41 seconds
+1 thread:
+2 threads:
+4 threads:
+Time: 5.14 seconds
+8 threads:
+Time: 3.22 seconds
+
+=== VOLUME CALCULATION TESTS ===
+1 thread:
+
+=== VOLUME CALCULATION TESTS ===
+1 thread:
+Time: 0.04 seconds
+2 threads:
+Time: 0.02 seconds
+4 threads:
+Time: 0.02 seconds
+8 threads:
+Time: 0.01 seconds

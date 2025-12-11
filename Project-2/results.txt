@@ -1,0 +1,41 @@
+Testing mean.out (serial)...
+Samples = 1000000
+Mean = 12
+0.01
+Testing threaded.out with 1 thread...
+Samples = 1000000
+Mean = 12
+0.00
+Testing threaded.out with 2 threads...
+Samples = 1000000
+Mean = 12
+0.00
+Testing threaded.out with 4 threads...
+Samples = 1000000
+Mean = 12
+0.00
+Testing sdf.out with 1 thread...
+0.475518
+0.04
+Testing sdf.out with 2 threads...
+0.476677
+0.03
+Testing sdf.out with 4 threads...
+0.47583
+0.02
+=== Large Data Tests ===
+Testing mean.out with data.bin (8.5B values)...
+Samples = 8500000000
+Mean = 52.7182
+Testing threaded.out with data.bin, 1 thread...
+Samples = 8500000000
+Mean = 52.7182
+Testing threaded.out with data.bin, 2 threads...
+Samples = 8500000000
+Mean = 52.7182
+Testing threaded.out with data.bin, 4 threads...
+Samples = 8500000000
+Mean = 52.7182
+Testing threaded.out with data.bin, 8 threads...
+Samples = 8500000000
+Mean = 52.7182
