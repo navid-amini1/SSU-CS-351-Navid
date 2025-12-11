@@ -20,7 +20,10 @@ The threaded version (`threaded.out`) was run with multiple thread counts.
 **Speedup definition:**
 
 \[
+$$
 \text{speedup} = \frac{T_{serial}}{T_{parallel}}
+$$
+
 \]
 
 ---
