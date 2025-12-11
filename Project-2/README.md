@@ -1,159 +1,125 @@
-# Project 2 – Threading and Multi-Core Applications  
-CS 351 – Computer Architecture  
+Project 2 – Threading and Multi-Core Applications
 
-This project implements two multithreaded programs:
+CS 351 – Computer Architecture
 
-1. A threaded mean calculator (threaded.cpp)  
-2. A Monte-Carlo volume estimator using a signed-distance function (sdf.cpp)
+This project contains two multithreaded programs:
 
-Both programs were compared to their single-threaded baselines, and speedup graphs were produced.
+A threaded mean calculator (threaded.cpp)
 
----
+A Monte-Carlo volume estimator using a signed-distance function (sdf.cpp)
 
-# 📌 Part 1 — Computing a Mean (threaded.cpp)
+Each program was compared to its single-threaded version. Timing measurements were collected, and speedup graphs were produced to analyze performance.
 
-## ✔ Serial and Threaded Performance
+Part 1 — Computing a Mean (threaded.cpp)
+Serial and Threaded Performance
 
-The serial version (`mean.out`) provides the baseline time.  
-The threaded version (`threaded.out`) was tested with multiple thread counts.
+The serial version (mean.out) provides the baseline runtime.
+The threaded version (threaded.out) was run using different numbers of threads, and the speedup was calculated using:
 
-Speedup is defined as:
+speedup = T_serial / T_parallel
 
-\[
-\text{speedup} = \frac{T_{serial}}{T_{parallel}}
-\]
+Mean Calculation Speedup Graph
 
----
+The graph plots number of threads (x-axis) against speedup (y-axis).
 
-# 📈 Mean Calculation Speedup Graph
+Observations
 
-![Mean Speedup](mean_speedup.png)
+Speedup increases significantly when moving from 1 → 4 → 8 threads.
 
-This graph plots **number of threads (X-axis)** vs **speedup (Y-axis)**.
+The curve begins to flatten, indicating diminishing returns as thread count increases.
 
-### ✔ Observations
-- Speedup increases significantly from 1 → 4 → 8 threads.
-- The curve begins to **flatten**, showing diminishing returns.
-- This behavior is expected due to **memory bandwidth limits** and **Amdahl’s Law**.
+The flattening is expected due to memory bandwidth limitations and the serial fraction of the program.
 
-### ✔ Maximum Speedup
-The highest measured speedup is around **10.4×** using 8 threads.
+Maximum Speedup
 
----
+The highest measured speedup for this section was approximately 10.4× using 8 threads.
 
-# 🧮 Amdahl’s Law Analysis
+Amdahl’s Law Analysis
 
-Amdahl’s Law:
+Amdahl’s Law models the theoretical speedup of a program with both serial and parallel components.
 
-\[
-T(n) = (1 - p)T + \frac{p}{n}T
-\]
+Given that the measured speedup approaches a limit near 10×, we can estimate the parallel fraction:
 
-The **maximum speedup** on the graph appears to level near **10×** even with more threads.
+S_infinity ≈ 10
+S_infinity = 1 / (1 − p)
 
-We estimate the parallel fraction \(p\) using:
+1 − p ≈ 0.1  
+p ≈ 0.9
 
-\[
-S_{\infty} \approx \frac{1}{1-p}
-\]
+Estimated Parallel Fraction
 
-Given:
+About 90% of the computation is parallel, and the remaining 10% is serial overhead (file I/O, setup, synchronization, etc.).
 
-\[
-S_{\infty} \approx 10
-\]
+Bandwidth Analysis
 
-Solving:
+Each iteration of the mean kernel loads one 4-byte float from memory:
 
-\[
-1 - p = 0.1
-\]
-\[
-p = 0.9
-\]
+Data per iteration = 4 bytes
 
-### ✔ Estimated Parallel Fraction  
-\[
-\boxed{p \approx 0.90}
-\]
 
-Meaning **90% of the work is parallel**, and **10% is serial overhead** (file loading, setup, barriers, etc.).
+Because all threads read from different sections of the same array, the program becomes memory-bandwidth bound.
+This explains why speedup levels off even with additional threads.
 
----
+Part 2 — Computing a Volume (sdf.cpp)
 
-# 💾 Bandwidth Analysis
+The Monte-Carlo estimator samples points inside a unit cube and subtracts the portion that lies inside a sphere of radius 0.5.
 
-Each iteration of the kernel loads **one 4-byte float** from memory.
+Analytical Volume Comparison
+Volume of cube        = 1
+Volume of sphere      = 4π(0.5)^3 / 3 = 0.5235987756
+Expected volume       = 1 − sphere volume = 0.4764012244
 
-\[
-\text{Data per iteration} = 4 \text{ bytes}
-\]
 
-Because threads read different sections of the same array, the kernel becomes **memory-bandwidth bound**, explaining why speedup plateaus even with more cores.
+The computed results match closely with the expected analytical value.
 
-Threaded versions show consistent performance because memory bandwidth — not computation — limits execution.
+Volume Calculation Speedup Graph
 
----
+Observations
 
-# 📌 Part 2 — Computing a Volume (sdf.cpp)
+Speedup behavior is similar to the mean calculation.
 
-The volume is computed using **Monte Carlo integration** inside the unit cube, removing a centered sphere of radius 0.5.
+Strong gains occur from 1 → 4 → 8 threads.
 
-### ✔ Exact Analytical Volume
+The curve begins to flatten at higher thread counts for the same reasons as before:
 
-\[
-V_{\text{cube}} = 1
-\]
+Random number generation overhead
 
-\[
-V_{\text{sphere}} = \frac{4\pi (0.5)^3}{3} = 0.5235987756
-\]
+Memory access cost
 
-\[
-V = 1 - V_{\text{sphere}} = 0.4764012244
-\]
+Barrier synchronization
 
-Our computed values are extremely close to this theoretical result.
+Maximum Speedup
 
----
+The highest measured speedup for the volume computation was also about 10.4×.
 
-# 📈 Volume Calculation Speedup Graph
+Conclusion
 
-![Volume Speedup](volume_speedup.png)
+Both programs show substantial improvements from multithreading.
 
-### ✔ Observations
-- Speedup shape is similar to the mean calculation.
-- Strong initial improvement moving from 1 → 4 → 8 threads.
-- Like before, speedup begins to flatten at higher thread counts due to:
-  - Random number generator cost  
-  - Memory effects  
-  - Barrier synchronization overhead  
+Memory bandwidth and serial overhead limit the maximum achievable speedup.
 
-### ✔ Maximum Speedup
-The highest measured speedup is approximately **10.4×**, similar to the mean calculation.
+Amdahl’s Law accurately explains the flattening behavior seen in the graphs.
 
----
+The Monte-Carlo volume estimator matches the expected theoretical value.
 
-# 📌 Conclusion
+The included graphs (mean_speedup.png and volume_speedup.png) illustrate the performance characteristics clearly.
 
-- Both programs show **significant performance gains** from threading.
-- **Memory bandwidth** and **serial overhead** limit maximum speedup.
-- Amdahl’s Law correctly predicts the flattening of the curve.
-- Monte Carlo volume estimation matches the expected mathematical value.
-- Graphs (`mean_speedup.png` and `volume_speedup.png`) are included for visual analysis.
+Files Included
 
----
+mean.cpp
 
-# ✔ Files Included
-- `mean.cpp`  
-- `threaded.cpp`  
-- `sdf.cpp`  
-- `Makefile`  
-- `trials.sh`  
-- `mean_speedup.png`  
-- `volume_speedup.png`  
-- Timing result files  
+threaded.cpp
 
----
+sdf.cpp
 
-# ✅ End of Report  
+Makefile
+
+trials.sh
+
+mean_speedup.png
+
+volume_speedup.png
+
+Timing result files
+
+End of Report
